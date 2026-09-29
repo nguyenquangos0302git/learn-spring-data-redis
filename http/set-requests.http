@@ -1,0 +1,56 @@
+### Module 4: Redis Set Endpoints
+@baseUrl = http://localhost:8080/api/redis/set
+
+### 1. SADD - Thêm user like bài viết 101 (Tự động loại trừ trùng lặp)
+POST {{baseUrl}}/sadd
+Content-Type: application/json
+
+{
+  "key": "article:101:likes",
+  "members": ["user_1", "user_2", "user_3"]
+}
+
+### 2. SADD - Thêm tag cho bài viết java
+POST {{baseUrl}}/sadd
+Content-Type: application/json
+
+{
+  "key": "tag:java:articles",
+  "members": ["article_101", "article_102", "article_103"]
+}
+
+### 3. SADD - Thêm tag cho bài viết redis
+POST {{baseUrl}}/sadd
+Content-Type: application/json
+
+{
+  "key": "tag:redis:articles",
+  "members": ["article_101", "article_104", "article_105"]
+}
+
+### 4. SISMEMBER - Kiểm tra user_1 đã like bài viết 101 chưa
+GET {{baseUrl}}/sismember?key=article:101:likes&member=user_1
+
+### 5. SMEMBERS - Lấy tất cả user đã like bài viết 101
+GET {{baseUrl}}/smembers?key=article:101:likes
+
+### 6. SCARD - Đếm tổng số like của bài viết 101
+GET {{baseUrl}}/scard?key=article:101:likes
+
+### 7. SINTER - Phép giao (Tìm bài viết có ĐỒNG THỜI cả thẻ java và redis)
+GET {{baseUrl}}/sinter?keys=tag:java:articles,tag:redis:articles
+
+### 8. SUNION - Phép hợp (Lấy tất cả bài viết có thẻ java HOẶC thẻ redis)
+GET {{baseUrl}}/sunion?keys=tag:java:articles,tag:redis:articles
+
+### 9. SDIFF - Phép hiệu (Lấy bài viết CHỈ có thẻ java mà KHÔNG có thẻ redis)
+GET {{baseUrl}}/sdiff?key=tag:java:articles&otherKey=tag:redis:articles
+
+### 10. SREM - Xóa user_2 (Unlike bài viết)
+DELETE {{baseUrl}}/srem
+Content-Type: application/json
+
+{
+  "key": "article:101:likes",
+  "members": ["user_2"]
+}

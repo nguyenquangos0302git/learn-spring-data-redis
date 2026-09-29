@@ -1,0 +1,63 @@
+### Module 3: Redis List Endpoints
+@baseUrl = http://localhost:8080/api/redis/list
+
+### 1. LPUSH - Đẩy phần tử vào đầu danh sách (Head / Trái)
+POST {{baseUrl}}/lpush
+Content-Type: application/json
+
+{
+  "key": "user:100:activity_log",
+  "value": "User logged in at 08:00"
+}
+
+### 2. LPUSH - Đẩy tiếp hoạt động thứ hai vào đầu
+POST {{baseUrl}}/lpush
+Content-Type: application/json
+
+{
+  "key": "user:100:activity_log",
+  "value": "User updated profile name at 08:15"
+}
+
+### 3. RPUSH - Đẩy phần tử vào đuôi danh sách (Tail / Phải) - Mô hình Hàng đợi (Queue)
+POST {{baseUrl}}/rpush
+Content-Type: application/json
+
+{
+  "key": "queue:email:welcome",
+  "value": "user1@gmail.com"
+}
+
+### 4. RPUSH - Đẩy thêm email thứ 2 vào hàng đợi
+POST {{baseUrl}}/rpush
+Content-Type: application/json
+
+{
+  "key": "queue:email:welcome",
+  "value": "user2@gmail.com"
+}
+
+### 5. LRANGE - Xem toàn bộ các phần tử trong danh sách (0 đến -1)
+GET {{baseUrl}}/lrange?key=user:100:activity_log&start=0&stop=-1
+
+### 6. LLEN - Đếm tổng số phần tử trong danh sách
+GET {{baseUrl}}/llen?key=user:100:activity_log
+
+### 7. LINDEX - Lấy phần tử theo vị trí index (0 là phần tử đầu tiên)
+GET {{baseUrl}}/lindex?key=user:100:activity_log&index=0
+
+### 8. LPOP - Lấy và xóa phần tử ở đầu danh sách (FIFO trong Queue)
+POST {{baseUrl}}/lpop?key=queue:email:welcome
+
+### 9. RPOP - Lấy và xóa phần tử ở đuôi danh sách
+POST {{baseUrl}}/rpop?key=user:100:activity_log
+
+### 10. LTRIM - Giữ lại cố định danh sách trong khoảng (ví dụ: chỉ giữ lại 5 log mới nhất từ 0 đến 4)
+POST {{baseUrl}}/ltrim
+Content-Type: application/json
+
+{
+  "key": "user:100:activity_log",
+  "start": 0,
+  "stop": 4
+}

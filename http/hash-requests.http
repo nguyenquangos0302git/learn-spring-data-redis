@@ -1,0 +1,56 @@
+### Module 2: Redis Hash Endpoints
+@baseUrl = http://localhost:8080/api/redis/hash
+
+### 1. HSET - Lưu hoặc cập nhật 1 field trong Hash
+POST {{baseUrl}}/hset
+Content-Type: application/json
+
+{
+  "key": "user:profile:100",
+  "field": "name",
+  "value": "Nguyen Quang"
+}
+
+### 2. HSET - Thêm field thứ 2
+POST {{baseUrl}}/hset
+Content-Type: application/json
+
+{
+  "key": "user:profile:100",
+  "field": "role",
+  "value": "Senior Backend Engineer"
+}
+
+### 3. HGET - Lấy giá trị của 1 field
+GET {{baseUrl}}/hget?key=user:profile:100&field=name
+
+### 4. HMSET - Lưu nhiều field cùng lúc
+POST {{baseUrl}}/hmset
+Content-Type: application/json
+
+{
+  "key": "user:profile:100",
+  "data": {
+    "location": "Hanoi, Vietnam",
+    "followers": 150,
+    "github": "nguyenquangos0302git"
+  }
+}
+
+### 5. HGETALL - Lấy toàn bộ cặp field-value của Hash
+GET {{baseUrl}}/hgetall?key=user:profile:100
+
+### 6. HMGET - Lấy danh sách nhiều field được chỉ định
+GET {{baseUrl}}/hmget?key=user:profile:100&fields=name,role,followers
+
+### 7. HINCRBY - Tăng giá trị số của 1 field (ví dụ: tăng follower)
+POST {{baseUrl}}/hincrby?key=user:profile:100&field=followers&delta=5
+
+### 8. HEXISTS - Kiểm tra field có tồn tại hay không
+GET {{baseUrl}}/hexists?key=user:profile:100&field=location
+
+### 9. HLEN - Đếm tổng số field trong Hash
+GET {{baseUrl}}/hlen?key=user:profile:100
+
+### 10. HDEL - Xóa 1 hoặc nhiều field khỏi Hash
+DELETE {{baseUrl}}/hdel?key=user:profile:100&fields=github

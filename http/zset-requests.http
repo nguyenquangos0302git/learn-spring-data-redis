@@ -1,0 +1,72 @@
+### Module 5: Redis Sorted Set (ZSet) Endpoints
+@baseUrl = http://localhost:8080/api/redis/zset
+
+### 1. ZADD - Thêm thí sinh vào bảng xếp hạng (Member + Score)
+POST {{baseUrl}}/zadd
+Content-Type: application/json
+
+{
+  "key": "leaderboard:contest",
+  "member": "player_alice",
+  "score": 100.0
+}
+
+### 2. ZADD - Thêm thí sinh thứ 2
+POST {{baseUrl}}/zadd
+Content-Type: application/json
+
+{
+  "key": "leaderboard:contest",
+  "member": "player_bob",
+  "score": 250.0
+}
+
+### 3. ZADD - Thêm thí sinh thứ 3
+POST {{baseUrl}}/zadd
+Content-Type: application/json
+
+{
+  "key": "leaderboard:contest",
+  "member": "player_charlie",
+  "score": 180.0
+}
+
+### 4. ZREVRANGE - Lấy Top Leaderboard từ điểm cao nhất xuống thấp nhất kèm Score
+GET {{baseUrl}}/zrevrange?key=leaderboard:contest&start=0&stop=-1
+
+### 5. ZRANGE - Lấy danh sách từ điểm thấp nhất đến cao nhất
+GET {{baseUrl}}/zrange?key=leaderboard:contest&start=0&stop=-1
+
+### 6. ZREVRANK - Lấy thứ hạng (Top mấy, bắt đầu từ 0) của player_bob
+GET {{baseUrl}}/zrevrank?key=leaderboard:contest&member=player_bob
+
+### 7. ZRANK - Thứ hạng từ thấp lên cao của player_alice
+GET {{baseUrl}}/zrank?key=leaderboard:contest&member=player_alice
+
+### 8. ZSCORE - Tra cứu điểm số hiện tại của player_alice
+GET {{baseUrl}}/zscore?key=leaderboard:contest&member=player_alice
+
+### 9. ZINCRBY - Cộng thêm điểm thưởng (hoặc trừ điểm phạt) cho player_alice
+POST {{baseUrl}}/zincrby
+Content-Type: application/json
+
+{
+  "key": "leaderboard:contest",
+  "member": "player_alice",
+  "delta": 200.0
+}
+
+### 10. ZRANGEBYSCORE - Lọc các người chơi có điểm số nằm trong khoảng [150, 350]
+GET {{baseUrl}}/zrangebyscore?key=leaderboard:contest&min=150.0&max=350.0
+
+### 11. ZCARD - Đếm tổng số thí sinh trong bảng xếp hạng
+GET {{baseUrl}}/zcard?key=leaderboard:contest
+
+### 12. ZREM - Xóa thí sinh khỏi bảng xếp hạng
+DELETE {{baseUrl}}/zrem
+Content-Type: application/json
+
+{
+  "key": "leaderboard:contest",
+  "members": ["player_charlie"]
+}

@@ -1,0 +1,51 @@
+### Module 1: Redis String Endpoints
+@baseUrl = http://localhost:8080/api/redis/string
+
+### 1. SET key-value (chuỗi đơn hoặc JSON object)
+POST {{baseUrl}}/set
+Content-Type: application/json
+
+{
+  "key": "user:1:name",
+  "value": "Nguyen Quang"
+}
+
+### 2. GET value theo key
+GET {{baseUrl}}/get?key=user:1:name
+
+### 3. SETEX - Lưu key kèm TTL hết hạn (15 giây)
+POST {{baseUrl}}/setex
+Content-Type: application/json
+
+{
+  "key": "otp:login:user1",
+  "value": "948201",
+  "seconds": 15
+}
+
+### 4. INCR - Tăng số nguyên (bộ đếm page view, counter)
+POST {{baseUrl}}/incr?key=article:101:views
+
+### 5. DECR - Giảm số nguyên (kho hàng, tồn kho)
+POST {{baseUrl}}/decr?key=article:101:views
+
+### 6. MSET - Lưu nhiều key cùng lúc
+POST {{baseUrl}}/mset
+Content-Type: application/json
+
+{
+  "data": {
+    "config:theme": "dark",
+    "config:lang": "vi",
+    "config:notifications": "true"
+  }
+}
+
+### 7. MGET - Đọc nhiều key cùng lúc
+GET {{baseUrl}}/mget?keys=config:theme,config:lang,config:notifications
+
+### 8. APPEND - Nối thêm chuỗi vào key
+POST {{baseUrl}}/append?key=user:1:name&value=%20(Backend%20Dev)
+
+### 9. STRLEN - Đo độ dài chuỗi của key
+GET {{baseUrl}}/strlen?key=user:1:name
