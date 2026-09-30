@@ -1,0 +1,1478 @@
+{
+	"info": {
+		"_postman_id": "8a329d48-6a57-4f99-923f-e1451f2fbc53",
+		"name": "Learn Spring Data Redis - 5 Core Modules",
+		"description": "Collection Postman kiểm thử đầy đủ 5 kiểu dữ liệu cốt lõi trong Redis (String, Hash, List, Set, Sorted Set) tương ứng với các Controller trong package `com.example.redis.modules`.\n\n### Biến môi trường:\n- `baseUrl`: `http://localhost:8080` (Mặc định của Spring Boot)\n\n### Giao diện quản lý Redis Commander GUI:\n- Truy cập `http://localhost:8081` để theo dõi keys và data thay đổi trực quan.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	],
+	"item": [
+		{
+			"name": "1. String Module",
+			"description": "Kiểu dữ liệu chuỗi cơ bản (Binary-safe, tối đa 512MB). Ánh xạ qua `redisTemplate.opsForValue()`",
+			"item": [
+				{
+					"name": "SET - Lưu cặp key-value",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"string:user:100\",\n  \"value\": \"Nguyen Quang\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/set",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"set"
+							]
+						},
+						"description": "Lưu một giá trị chuỗi hoặc object vào key chỉ định."
+					},
+					"response": []
+				},
+				{
+					"name": "GET - Lấy giá trị của key",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/get?key=string:user:100",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"get"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "string:user:100"
+								}
+							]
+						},
+						"description": "Đọc giá trị đang lưu tại key."
+					},
+					"response": []
+				},
+				{
+					"name": "SETEX - Lưu giá trị kèm thời gian sống (TTL)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"string:otp:user@example.com\",\n  \"value\": \"839201\",\n  \"seconds\": 300\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/setex",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"setex"
+							]
+						},
+						"description": "Lưu cặp key-value và tự động hết hạn sau số giây quy định (thường dùng cho OTP, Cache tạm)."
+					},
+					"response": []
+				},
+				{
+					"name": "INCR - Tăng giá trị số nguyên thêm 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/incr?key=string:article:101:views",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"incr"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "string:article:101:views"
+								}
+							]
+						},
+						"description": "Tăng nguyên tử giá trị số lưu tại key lên 1 đơn vị (dùng làm bộ đếm view, rate limit)."
+					},
+					"response": []
+				},
+				{
+					"name": "DECR - Giảm giá trị số nguyên đi 1",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/decr?key=string:article:101:views",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"decr"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "string:article:101:views"
+								}
+							]
+						},
+						"description": "Giảm nguyên tử giá trị số lưu tại key đi 1 đơn vị (dùng cho trừ kho Flash Sale)."
+					},
+					"response": []
+				},
+				{
+					"name": "MSET - Gán nhiều key cùng lúc",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"data\": {\n    \"string:config:theme\": \"dark\",\n    \"string:config:language\": \"vi\",\n    \"string:config:items_per_page\": 20\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/mset",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"mset"
+							]
+						},
+						"description": "Lưu hàng loạt cặp key-value trong một lượt truyền mạng RTT."
+					},
+					"response": []
+				},
+				{
+					"name": "MGET - Đọc nhiều key cùng lúc",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/mget?keys=string:config:theme,string:config:language,string:config:items_per_page",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"mget"
+							],
+							"query": [
+								{
+									"key": "keys",
+									"value": "string:config:theme,string:config:language,string:config:items_per_page"
+								}
+							]
+						},
+						"description": "Lấy giá trị của danh sách nhiều key cùng lúc."
+					},
+					"response": []
+				},
+				{
+					"name": "APPEND - Nối chuỗi vào giá trị hiện tại",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/append?key=string:user:100&value=%20(Backend%20Developer)",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"append"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "string:user:100"
+								},
+								{
+									"key": "value",
+									"value": " (Backend Developer)"
+								}
+							]
+						},
+						"description": "Nối thêm chuỗi vào cuối chuỗi hiện có của key và trả về tổng độ dài mới."
+					},
+					"response": []
+				},
+				{
+					"name": "STRLEN - Đo độ dài chuỗi tại key",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/string/strlen?key=string:user:100",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"string",
+								"strlen"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "string:user:100"
+								}
+							]
+						},
+						"description": "Đo độ dài chuỗi mà không cần đọc toàn bộ nội dung ra ngoài mạng."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "2. Hash Module",
+			"description": "Kiểu dữ liệu Hash (ánh xạ field-value, tối đa 2^32-1 cặp). Ánh xạ qua `redisTemplate.opsForHash()`",
+			"item": [
+				{
+					"name": "HSET - Tạo/cập nhật 1 field trong Hash",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"hash:user:profile:100\",\n  \"field\": \"name\",\n  \"value\": \"Nguyen Quang\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hset",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hset"
+							]
+						},
+						"description": "Thêm hoặc cập nhật giá trị của một thuộc tính (field) trong Hash."
+					},
+					"response": []
+				},
+				{
+					"name": "HGET - Đọc 1 field cụ thể trong Hash",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hget?key=hash:user:profile:100&field=name",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hget"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hash:user:profile:100"
+								},
+								{
+									"key": "field",
+									"value": "name"
+								}
+							]
+						},
+						"description": "Lấy giá trị của một field riêng biệt trong Hash."
+					},
+					"response": []
+				},
+				{
+					"name": "HMSET - Gán nhiều field-value cùng lúc",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"hash:user:profile:100\",\n  \"data\": {\n    \"email\": \"quang@example.com\",\n    \"role\": \"ADMIN\",\n    \"bio\": \"Spring Boot & Redis Enthusiast\",\n    \"followersCount\": 0\n  }\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hmset",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hmset"
+							]
+						},
+						"description": "Lưu nguyên một object hoặc nhiều cặp field-value vào Hash."
+					},
+					"response": []
+				},
+				{
+					"name": "HGETALL - Lấy toàn bộ các field-value",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hgetall?key=hash:user:profile:100",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hgetall"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hash:user:profile:100"
+								}
+							]
+						},
+						"description": "Lấy toàn bộ thông tin của đối tượng được lưu trong Hash."
+					},
+					"response": []
+				},
+				{
+					"name": "HMGET - Lấy giá trị của nhiều field chỉ định",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hmget?key=hash:user:profile:100&fields=name,email,role",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hmget"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hash:user:profile:100"
+								},
+								{
+									"key": "fields",
+									"value": "name,email,role"
+								}
+							]
+						},
+						"description": "Chỉ lấy một số thuộc tính cụ thể thay vì lấy hết cả object."
+					},
+					"response": []
+				},
+				{
+					"name": "HEXISTS - Kiểm tra sự tồn tại của 1 field",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hexists?key=hash:user:profile:100&field=email",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hexists"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hash:user:profile:100"
+								},
+								{
+									"key": "field",
+									"value": "email"
+								}
+							]
+						},
+						"description": "Kiểm tra xem field có tồn tại trong Hash hay không (phục vụ validation)."
+					},
+					"response": []
+				},
+				{
+					"name": "HLEN - Đếm tổng số field trong Hash",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hlen?key=hash:user:profile:100",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hlen"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hash:user:profile:100"
+								}
+							]
+						},
+						"description": "Đếm tổng số lượng trường (fields) của Hash."
+					},
+					"response": []
+				},
+				{
+					"name": "HINCRBY - Tăng giá trị số của 1 field",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hincrby?key=hash:user:profile:100&field=followersCount&delta=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hincrby"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hash:user:profile:100"
+								},
+								{
+									"key": "field",
+									"value": "followersCount"
+								},
+								{
+									"key": "delta",
+									"value": "1"
+								}
+							]
+						},
+						"description": "Tăng nguyên tử giá trị số của 1 field lên delta đơn vị (dùng tăng follower, số lượng món đồ giỏ hàng)."
+					},
+					"response": []
+				},
+				{
+					"name": "HDEL - Xóa 1 hoặc nhiều field khỏi Hash",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/hash/hdel?key=hash:user:profile:100&fields=bio",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"hash",
+								"hdel"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "hash:user:profile:100"
+								},
+								{
+									"key": "fields",
+									"value": "bio"
+								}
+							]
+						},
+						"description": "Xóa bớt thuộc tính khỏi đối tượng Hash."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "3. List Module",
+			"description": "Danh sách chuỗi liên kết đôi (Linked List). Hỗ trợ hàng đợi FIFO và ngăn xếp LIFO. Ánh xạ qua `redisTemplate.opsForList()`",
+			"item": [
+				{
+					"name": "LPUSH - Chèn vào đầu trái (Head)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"list:user:100:activities\",\n  \"value\": \"Published article #101\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/lpush",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"lpush"
+							]
+						},
+						"description": "Đẩy một phần tử mới vào đầu trái của danh sách (thích hợp cho bài đăng mới nhất)."
+					},
+					"response": []
+				},
+				{
+					"name": "RPUSH - Chèn vào đuôi phải (Tail)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"list:user:100:activities\",\n  \"value\": \"Liked article #42\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/rpush",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"rpush"
+							]
+						},
+						"description": "Đẩy một phần tử vào đuôi phải danh sách (thích hợp để đẩy job vào hàng đợi Task Queue)."
+					},
+					"response": []
+				},
+				{
+					"name": "LRANGE - Lấy danh sách phần tử trong khoảng",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/lrange?key=list:user:100:activities&start=0&stop=-1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"lrange"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "list:user:100:activities"
+								},
+								{
+									"key": "start",
+									"value": "0"
+								},
+								{
+									"key": "stop",
+									"value": "-1"
+								}
+							]
+						},
+						"description": "Lấy danh sách phần tử từ chỉ số start đến stop (0 đến -1 là lấy toàn bộ)."
+					},
+					"response": []
+				},
+				{
+					"name": "LLEN - Đếm tổng số phần tử trong List",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/llen?key=list:user:100:activities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"llen"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "list:user:100:activities"
+								}
+							]
+						},
+						"description": "Kiểm tra độ dài của hàng đợi hoặc danh sách."
+					},
+					"response": []
+				},
+				{
+					"name": "LINDEX - Lấy phần tử theo vị trí index",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/lindex?key=list:user:100:activities&index=0",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"lindex"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "list:user:100:activities"
+								},
+								{
+									"key": "index",
+									"value": "0"
+								}
+							]
+						},
+						"description": "Truy xuất phần tử tại chỉ mục index xác định."
+					},
+					"response": []
+				},
+				{
+					"name": "LTRIM - Cắt giữ lại N phần tử chỉ định",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"list:user:100:activities\",\n  \"start\": 0,\n  \"stop\": 9\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/ltrim",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"ltrim"
+							]
+						},
+						"description": "Cắt danh sách và chỉ giữ lại từ start đến stop (ví dụ: chỉ giữ 10 log mới nhất)."
+					},
+					"response": []
+				},
+				{
+					"name": "LPOP - Lấy và xóa phần tử ở đầu trái",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/lpop?key=list:user:100:activities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"lpop"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "list:user:100:activities"
+								}
+							]
+						},
+						"description": "Lấy và loại bỏ phần tử ở đầu trái (kết hợp với RPUSH tạo FIFO Queue, hoặc LPUSH tạo LIFO Stack)."
+					},
+					"response": []
+				},
+				{
+					"name": "RPOP - Lấy và xóa phần tử ở đuôi phải",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/list/rpop?key=list:user:100:activities",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"list",
+								"rpop"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "list:user:100:activities"
+								}
+							]
+						},
+						"description": "Lấy và loại bỏ phần tử ở đuôi phải của danh sách."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "4. Set Module",
+			"description": "Tập hợp các chuỗi không phân thứ tự và không chứa phần tử trùng lặp. Ánh xạ qua `redisTemplate.opsForSet()`",
+			"item": [
+				{
+					"name": "SADD - Thêm phần tử vào Set (Likes)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"set:article:101:likes\",\n  \"members\": [\"user_100\", \"user_101\", \"user_102\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/sadd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"sadd"
+							]
+						},
+						"description": "Thêm một hoặc nhiều member vào Set (tự động bỏ qua nếu đã tồn tại, tránh like 2 lần)."
+					},
+					"response": []
+				},
+				{
+					"name": "SISMEMBER - Kiểm tra 1 member có trong Set không",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/sismember?key=set:article:101:likes&member=user_100",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"sismember"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "set:article:101:likes"
+								},
+								{
+									"key": "member",
+									"value": "user_100"
+								}
+							]
+						},
+						"description": "Kiểm tra user đã like bài viết chưa với độ phức tạp O(1)."
+					},
+					"response": []
+				},
+				{
+					"name": "SMEMBERS - Lấy toàn bộ danh sách member",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/smembers?key=set:article:101:likes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"smembers"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "set:article:101:likes"
+								}
+							]
+						},
+						"description": "Lấy tất cả các phần tử trong Set."
+					},
+					"response": []
+				},
+				{
+					"name": "SCARD - Đếm tổng số phần tử trong Set",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/scard?key=set:article:101:likes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"scard"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "set:article:101:likes"
+								}
+							]
+						},
+						"description": "Thống kê tổng số lượng phần tử (tổng số lượt like, tổng số tag)."
+					},
+					"response": []
+				},
+				{
+					"name": "[Setup] SADD - Thêm Tag Java",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"set:tag:java:articles\",\n  \"members\": [\"article:101\", \"article:102\", \"article:105\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/sadd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"sadd"
+							]
+						},
+						"description": "Tạo dữ liệu các bài viết có tag 'java' để chuẩn bị test phép giao/hợp/hiệu."
+					},
+					"response": []
+				},
+				{
+					"name": "[Setup] SADD - Thêm Tag Redis",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"set:tag:redis:articles\",\n  \"members\": [\"article:101\", \"article:105\", \"article:107\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/sadd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"sadd"
+							]
+						},
+						"description": "Tạo dữ liệu các bài viết có tag 'redis' để chuẩn bị test phép giao/hợp/hiệu."
+					},
+					"response": []
+				},
+				{
+					"name": "SINTER - Phép Giao giữa các Set",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/sinter?keys=set:tag:java:articles,set:tag:redis:articles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"sinter"
+							],
+							"query": [
+								{
+									"key": "keys",
+									"value": "set:tag:java:articles,set:tag:redis:articles"
+								}
+							]
+						},
+						"description": "Tìm các phần tử chung (ví dụ: bài viết vừa có tag java vừa có tag redis)."
+					},
+					"response": []
+				},
+				{
+					"name": "SUNION - Phép Hợp giữa các Set",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/sunion?keys=set:tag:java:articles,set:tag:redis:articles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"sunion"
+							],
+							"query": [
+								{
+									"key": "keys",
+									"value": "set:tag:java:articles,set:tag:redis:articles"
+								}
+							]
+						},
+						"description": "Hợp nhất các phần tử của nhiều Set mà không bị trùng lặp."
+					},
+					"response": []
+				},
+				{
+					"name": "SDIFF - Phép Hiệu giữa các Set",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/sdiff?key=set:tag:java:articles&otherKey=set:tag:redis:articles",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"sdiff"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "set:tag:java:articles"
+								},
+								{
+									"key": "otherKey",
+									"value": "set:tag:redis:articles"
+								}
+							]
+						},
+						"description": "Lấy các phần tử có trong Set 1 nhưng không có trong Set 2 (gợi ý bạn bè, gợi ý bài viết chưa đọc)."
+					},
+					"response": []
+				},
+				{
+					"name": "SREM - Xóa phần tử khỏi Set",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"set:article:101:likes\",\n  \"members\": [\"user_102\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/set/srem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"set",
+								"srem"
+							]
+						},
+						"description": "Xóa phần tử khỏi Set (ví dụ: hủy like, gỡ tag)."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "5. Sorted Set (ZSet) Module",
+			"description": "Tập hợp có sắp xếp theo điểm số (Score). Ánh xạ qua `redisTemplate.opsForZSet()`",
+			"item": [
+				{
+					"name": "ZADD - Thêm/Cập nhật phần tử kèm điểm số",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"zset:leaderboard:trending\",\n  \"member\": \"article:101\",\n  \"score\": 150.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zadd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zadd"
+							]
+						},
+						"description": "Thêm phần tử vào ZSet kèm theo điểm số float/double để sắp xếp."
+					},
+					"response": []
+				},
+				{
+					"name": "[Setup] ZADD - Thêm article 102",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"zset:leaderboard:trending\",\n  \"member\": \"article:102\",\n  \"score\": 250.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zadd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zadd"
+							]
+						},
+						"description": "Thêm thêm bài viết với điểm số cao hơn."
+					},
+					"response": []
+				},
+				{
+					"name": "[Setup] ZADD - Thêm article 103",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"zset:leaderboard:trending\",\n  \"member\": \"article:103\",\n  \"score\": 80.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zadd",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zadd"
+							]
+						},
+						"description": "Thêm thêm bài viết với điểm số thấp hơn."
+					},
+					"response": []
+				},
+				{
+					"name": "ZRANGE - Lấy danh sách sắp xếp từ thấp đến cao",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zrange?key=zset:leaderboard:trending&start=0&stop=-1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zrange"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "zset:leaderboard:trending"
+								},
+								{
+									"key": "start",
+									"value": "0"
+								},
+								{
+									"key": "stop",
+									"value": "-1"
+								}
+							]
+						},
+						"description": "Lấy danh sách các phần tử theo thứ tự điểm tăng dần kèm điểm số."
+					},
+					"response": []
+				},
+				{
+					"name": "ZREVRANGE - Lấy Top bảng xếp hạng (từ cao xuống thấp)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zrevrange?key=zset:leaderboard:trending&start=0&stop=9",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zrevrange"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "zset:leaderboard:trending"
+								},
+								{
+									"key": "start",
+									"value": "0"
+								},
+								{
+									"key": "stop",
+									"value": "9"
+								}
+							]
+						},
+						"description": "Lấy danh sách Top Leaderboard theo thứ tự điểm giảm dần (Top 10 hot nhất)."
+					},
+					"response": []
+				},
+				{
+					"name": "ZRANK - Tra cứu thứ hạng từ thấp lên cao (0-based)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zrank?key=zset:leaderboard:trending&member=article:101",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zrank"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "zset:leaderboard:trending"
+								},
+								{
+									"key": "member",
+									"value": "article:101"
+								}
+							]
+						},
+						"description": "Xem vị trí thứ hạng của phần tử (bắt đầu từ 0, điểm thấp đứng trước)."
+					},
+					"response": []
+				},
+				{
+					"name": "ZREVRANK - Tra cứu thứ hạng từ cao xuống thấp (Top Mấy)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zrevrank?key=zset:leaderboard:trending&member=article:101",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zrevrank"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "zset:leaderboard:trending"
+								},
+								{
+									"key": "member",
+									"value": "article:101"
+								}
+							]
+						},
+						"description": "Xem vị trí thứ hạng trong bảng xếp hạng Top (0 là đứng đầu bảng)."
+					},
+					"response": []
+				},
+				{
+					"name": "ZSCORE - Lấy điểm số hiện tại của 1 member",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zscore?key=zset:leaderboard:trending&member=article:101",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zscore"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "zset:leaderboard:trending"
+								},
+								{
+									"key": "member",
+									"value": "article:101"
+								}
+							]
+						},
+						"description": "Lấy điểm số cụ thể của một phần tử trong ZSet."
+					},
+					"response": []
+				},
+				{
+					"name": "ZINCRBY - Tăng/giảm điểm số của member",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"zset:leaderboard:trending\",\n  \"member\": \"article:101\",\n  \"delta\": 150.0\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zincrby",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zincrby"
+							]
+						},
+						"description": "Cộng thêm delta điểm cho member (ví dụ khi bài viết có thêm lượt like/share)."
+					},
+					"response": []
+				},
+				{
+					"name": "ZRANGEBYSCORE - Lọc phần tử theo khoảng điểm",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zrangebyscore?key=zset:leaderboard:trending&min=100&max=350",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zrangebyscore"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "zset:leaderboard:trending"
+								},
+								{
+									"key": "min",
+									"value": "100"
+								},
+								{
+									"key": "max",
+									"value": "350"
+								}
+							]
+						},
+						"description": "Lọc các phần tử có điểm số nằm trong khoảng [min, max] (dùng lọc sản phẩm theo tầm giá)."
+					},
+					"response": []
+				},
+				{
+					"name": "ZCARD - Đếm tổng số phần tử trong ZSet",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zcard?key=zset:leaderboard:trending",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zcard"
+							],
+							"query": [
+								{
+									"key": "key",
+									"value": "zset:leaderboard:trending"
+								}
+							]
+						},
+						"description": "Đếm tổng số lượng phần tử có trong Sorted Set."
+					},
+					"response": []
+				},
+				{
+					"name": "ZREM - Xóa phần tử khỏi ZSet",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"key\": \"zset:leaderboard:trending\",\n  \"members\": [\"article:103\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/redis/zset/zrem",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"redis",
+								"zset",
+								"zrem"
+							]
+						},
+						"description": "Xóa phần tử khỏi Sorted Set."
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
